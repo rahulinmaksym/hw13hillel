@@ -1,20 +1,21 @@
-package task3;
+package task5;
 
-import java.util.Comparator;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SearchService {
 
-    public Product findTheCheapestBook(List<Product> initialProductList) throws NoSuchCategoryException {
+    public double generalPrice(List<Product> initialProductList) throws NoSuchCategoryException {
         List<Product> bookList = initialProductList.stream()
                 .filter(product -> Objects.equals(product.type(), "Book"))
                 .collect(Collectors.toList());
         if(!bookList.isEmpty()) {
             return bookList.stream()
-                    .min(Comparator.comparingDouble(Product::price))
-                    .get();
+                    .filter(book -> book.dateTime().getYear() == LocalDateTime.now().getYear() && book.price() <= 75)
+                    .mapToDouble(Product::price)
+                    .sum();
         }
         else {
             throw new NoSuchCategoryException("Book");
